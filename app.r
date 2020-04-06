@@ -201,12 +201,14 @@ server <- function(input, output){
              `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
              `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
              `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+             tot_homeless_undercount_only = `Sheltered homeless individuals (2019 PIT)` +  `Adjusted unsheltered homeless individuals`,
+             
              `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
              `Total homeless individuals in high risk category (with adjustments)` =
                round(`Total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
              `Total homeless individuals in low risk category (with adjustments)` =
                round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
-      mutate(total_homeless = `Total homeless individuals (with adjustments)`,
+      mutate(total_homeless = tot_homeless_undercount_only,
              pct_infected = input$infection / 100,
              pct_high_risk = input$high_risk /100,
              covid_neg_high_risk = total_homeless * (1 - pct_infected)  * pct_high_risk,
@@ -243,12 +245,14 @@ server <- function(input, output){
                `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
                `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
                `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+               tot_homeless_undercount_only = `Sheltered homeless individuals (2019 PIT)` +  `Adjusted unsheltered homeless individuals`,
+               
                `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
                `Total homeless individuals in high risk category (with adjustments)` =
                  round(`Total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
                `Total homeless individuals in low risk category (with adjustments)` =
                  round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
-        mutate(total_homeless = `Total homeless individuals (with adjustments)`,
+        mutate(total_homeless = tot_homeless_undercount_only,
                pct_infected = input$infection / 100,
                pct_high_risk = input$high_risk /100,
                covid_neg_high_risk = total_homeless * (1 - pct_infected)  * pct_high_risk,

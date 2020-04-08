@@ -1,12 +1,14 @@
 # Overview
  
-This dashboard is intended to provide information to inform planning and response efforts to address the COVID-19 pandemic among persons experiencing homelessness in the United States.  The dashboard is intended to provide the following information at both the national and Continuum of Care (CoC) level:
+This dashboard is intended to provide information to inform planning and response efforts to address the COVID-19 pandemic among persons experiencing homelessness in the United States.  The dashboard is intended to provide the following information at the national HUD Continuum of Care (CoC) and (in some cases) county^1 levels:
+
 
 1. Estimated size of the single adult homeless population, to provide a baseline understanding of scope of potential COVID-19 related impact and needs
 2. Potential impact of COVID-19 on the single homeless population, including number of infections, number of hospitalizations, number of Intensive Care Unit (ICU) admissions and number of fatalities
 3. Capacity needed to provide emergency accommodation to the single adult homeless population
 
 The dashboard is based on [this report](https://works.bepress.com/dennis_culhane/237/) of the impact of COVID-19 on the homeless population and was created by the report's authors: [Dennis P. Culhane](https://www.sp2.upenn.edu/people/view/dennis-culhane/), [Dan Treglia](https://www.sp2.upenn.edu/people/view/dan-treglia/), & [Ken Steif](https://www.design.upenn.edu/city-regional-planning/phd/people/kenneth-steif) from the University of Pennsylvania, [Tom Byrne](https://www.bu.edu/ssw/profile/thomas-byrne/) from the Boston University School of Social Work and [Randall Kuhn](https://ph.ucla.edu/faculty/kuhn) from UCLA.
+
 
 The dashboard will be updated regularly as new data become available and to add new information. Update announcements will be made [here on Twitter](https://twitter.com/TomHByrne).
 
@@ -37,3 +39,5 @@ The modifiable parameters are as follows:
 4. __Annual turnover rate in sheltered homeless population__:  The number of persons experiencing homelessness over the course of a year may be several times greater than the number of persons experiencing homelessness on a given night.  In turn, the estimated impact of COVID-19 on the homeless population in terms of infections, hospitalizations and deaths over an extended period of time will vary depending on the number of people who experience homelesnsess over an extended period of time.  However, as noted above, estimated need for emergency accomodation is not sensitive to turnover. 
 
 5. __Groups used to estimate capacity__: As noted above, the estimates of capacity needed stratify the homeless population into 4 different groups based on their COVID-19 status and their level of risk of medical complications.  Communities may want to target emergency accommodations at some subset of these 4 different groups and thus can model capacity needed to provide emergency accommodation to any combination of these 4 groups. 
+
+__^1__: County level data is currently only available for counties that have provided data to the application developers. These counties are primarily part of Balance of State CoCs.  If you are interested in providing county data, please contact Tom Byrne at [tbyrne@bu.edu](tbyrne@bu.edu)

@@ -5,17 +5,16 @@ library(ggplot2)
 library(datasets)
 library(markdown) 
 
+source("000_integrate_county_and_coc_data.R")
  
-cocs <- read.csv("coc_projections.csv", stringsAsFactors = FALSE) %>%
-  mutate(coc = paste(coc_number, coc_name))
 
-homeless_counts <- cocs %>%
-  select(coc, unshelteredhomeless, sheltered) %>%
-  gather(variable, value, 2:3)
+homeless_counts <- all_communities %>%
+  select(community, community_type, unshelteredhomeless, sheltered) %>%
+  gather(variable, value, 3:4)
   
 # Create parameters to be used later
 # Create vector of CoC names
-coc_names <- as.vector(distinct(cocs, coc))
+community_names <- as.vector(distinct(all_communities, community))
 
 # Create hospitalization, ICU admission and fatality rate parameters--
 # these are calculated as ratio of hospitalizations, icu admissions and fatalities
@@ -40,8 +39,14 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel("Select values to customize",
-                 selectInput("community", "Continuum of Care (CoC)", choices = coc_names),
                  
+                 
+                 selectInput("community_type", "Select type of community", 
+                             choices = c("HUD Continuum of Care (CoC)", 
+                                         "County",
+                                         "United States, nationwide")), 
+                 
+                 selectInput("community", "Name", choices = community_names),
                  br(),
                  
                  sliderInput("unshel_undercount", "% undercount of unsheltered population",
@@ -99,28 +104,43 @@ ui <- fluidPage(
 )
 )
  
-server <- function(input, output){
+server <- function(input, output, session){
+  
+  observe({
+    
+    x <- input$community_type
+    y <- filter(all_communities, community_type == x)
+    
+    community_choices <- distinct(y, community)
+    
+    if (is.null(x))
+      
+      x <- character(0)
+    
+    updateSelectInput(session, "community",
+                      choices = community_choices)
+    
   
   
   output$count_table <- renderTable({
     
-    data <- subset(cocs, coc == input$community)
+    data <- subset(all_communities, community == input$community)
     
     data2 <- data %>%
       mutate(pct_undercount = input$unshel_undercount / 100,
-             `Sheltered homeless individuals (2019 PIT)` = sheltered,
-             `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
+             `Sheltered homeless individuals (2019 HUD Point-in-Time)` = sheltered,
+             `Unsheltered homeless individuals (2019 HUD Point-in-Time)` = unshelteredhomeless,
              `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
-             `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
-             `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
-             `Total homeless individuals in high risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
-      select(coc, 
-             `Sheltered homeless individuals (2019 PIT)`,
-             `Unsheltered homeless individuals (2019 PIT)`,
+             `Annualized sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+             `Annualized total homeless individuals (with adjustments)` =  round(`Annualized sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
+             `Annualized total homeless individuals in high risk category (with adjustments)` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
+      select(community, 
+             `Sheltered homeless individuals (2019 HUD Point-in-Time)`,
+             `Unsheltered homeless individuals (2019 HUD Point-in-Time)`,
              `Adjusted unsheltered homeless individuals`,
-             `Sheltered homeless individuals (adjusted for turnover)`,
-             `Total homeless individuals (with adjustments)`)
+             `Annualized sheltered homeless individuals (adjusted for turnover)`,
+             `Annualized total homeless individuals (with adjustments)`)
     data2
     
   })
@@ -128,25 +148,25 @@ server <- function(input, output){
   
   output$count_table2 <- renderTable({
     
-    data3 <- subset(cocs, coc == input$community)
+    data3 <- subset(all_communities, community == input$community)
     
     data4 <- data3 %>%
       mutate(pct_undercount = input$unshel_undercount / 100,
-             `Sheltered homeless individuals (2019 PIT)` = sheltered,
-             `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
+             `Sheltered homeless individuals (2019 HUD Point-in-Time)` = sheltered,
+             `Unsheltered homeless individuals (2019 HUD Point-in-Time)` = unshelteredhomeless,
              `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
-             `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
-             `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
-             `Total homeless individuals in high risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
-             `Total homeless individuals in low risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)
+             `Annualized sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+             `Annualized total homeless individuals (with adjustments)` =  round(`Annualized sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
+             `Annualized total homeless individuals in high risk category (with adjustments)` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
+             `Annualized total homeless individuals in low risk category (with adjustments` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)
              
              ) %>%
-      select(coc, 
-             `Total homeless individuals in high risk category (with adjustments)`,
-             `Total homeless individuals in low risk category (with adjustments)`,
-             `Total homeless individuals (with adjustments)`
+      select(community, 
+             `Annualized total homeless individuals in high risk category (with adjustments)`,
+             `Annualized total homeless individuals in low risk category (with adjustments`,
+             `Annualized total homeless individuals (with adjustments)`
              )
     
     data4
@@ -156,28 +176,28 @@ server <- function(input, output){
   
   output$impact_table <- renderTable({
     
-    impact <- subset(cocs, coc == input$community)
+    impact <- subset(all_communities, community == input$community)
     
     impact2 <- impact %>%
       mutate(pct_undercount = input$unshel_undercount / 100,
-             `Sheltered homeless individuals (2019 PIT)` = sheltered,
-             `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
+             `Sheltered homeless individuals (2019 HUD Point-in-Time)` = sheltered,
+             `Unsheltered homeless individuals (2019 HUD Point-in-Time)` = unshelteredhomeless,
              `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
-             `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
-             `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
-             `Total homeless individuals in high risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
-             `Total homeless individuals in low risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0),
+             `Annualized sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+             `Annualized total homeless individuals (with adjustments)` =  round(`Annualized sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
+             `Annualized total homeless individuals in high risk category (with adjustments)` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
+             `Annualized total homeless individuals in low risk category (with adjustments` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0),
              
-             Infections = round(`Total homeless individuals (with adjustments)` * (input$infection / 100), 0),
+             Infections = round(`Annualized total homeless individuals (with adjustments)` * (input$infection / 100), 0),
              Hospitalizations = round(Infections * hospitalization_rate,0),
              `ICU Admissions` = round(Infections * icu_admissions,0),
              Fatalities = round(Infections * fatality,0)
              
       ) %>%
-      select(coc,
-             `Total homeless individuals (with adjustments)`,
+      select(community,
+             `Annualized total homeless individuals (with adjustments)`,
              Infections,
              Hospitalizations,
              `ICU Admissions`,
@@ -193,21 +213,21 @@ server <- function(input, output){
   
   output$capacity_needed <- renderText({
     
-    covid <- subset(cocs, coc == input$community)
+    covid <- subset(all_communities, community == input$community)
     
     covid <- covid %>%
       mutate(pct_undercount = input$unshel_undercount / 100,
-             `Sheltered homeless individuals (2019 PIT)` = sheltered,
-             `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
+             `Sheltered homeless individuals (2019 HUD Point-in-Time)` = sheltered,
+             `Unsheltered homeless individuals (2019 HUD Point-in-Time)` = unshelteredhomeless,
              `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
-             `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
-             tot_homeless_undercount_only = `Sheltered homeless individuals (2019 PIT)` +  `Adjusted unsheltered homeless individuals`,
+             `Annualized sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+             tot_homeless_undercount_only = `Sheltered homeless individuals (2019 HUD Point-in-Time)` +  `Adjusted unsheltered homeless individuals`,
              
-             `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
-             `Total homeless individuals in high risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
-             `Total homeless individuals in low risk category (with adjustments)` =
-               round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
+             `Annualized total homeless individuals (with adjustments)` =  round(`Annualized sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
+             `Annualized total homeless individuals in high risk category (with adjustments)` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
+             `Annualized total homeless individuals in low risk category (with adjustments` =
+               round(`Annualized total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
       mutate(total_homeless = tot_homeless_undercount_only,
              pct_infected = input$infection / 100,
              pct_high_risk = input$high_risk /100,
@@ -237,21 +257,21 @@ server <- function(input, output){
   })
   
     output$covid_plot <- renderPlot({
-      covid <- subset(cocs, coc == input$community)
+      covid <- subset(all_communities, community == input$community)
       
       covid <- covid %>%
         mutate(pct_undercount = input$unshel_undercount / 100,
-               `Sheltered homeless individuals (2019 PIT)` = sheltered,
-               `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
+               `Sheltered homeless individuals (2019 HUD Point-in-Time)` = sheltered,
+               `Unsheltered homeless individuals (2019 HUD Point-in-Time)` = unshelteredhomeless,
                `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
-               `Sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
-               tot_homeless_undercount_only = `Sheltered homeless individuals (2019 PIT)` +  `Adjusted unsheltered homeless individuals`,
+               `Annualized sheltered homeless individuals (adjusted for turnover)` = round(sheltered * input$turnover_rate, 0),
+               tot_homeless_undercount_only = `Sheltered homeless individuals (2019 HUD Point-in-Time)` +  `Adjusted unsheltered homeless individuals`,
                
-               `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
-               `Total homeless individuals in high risk category (with adjustments)` =
-                 round(`Total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
-               `Total homeless individuals in low risk category (with adjustments)` =
-                 round(`Total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
+               `Annualized total homeless individuals (with adjustments)` =  round(`Annualized sheltered homeless individuals (adjusted for turnover)` + `Adjusted unsheltered homeless individuals`,0),
+               `Annualized total homeless individuals in high risk category (with adjustments)` =
+                 round(`Annualized total homeless individuals (with adjustments)` * ((input$high_risk) /100), 0),
+               `Annualized total homeless individuals in low risk category (with adjustments` =
+                 round(`Annualized total homeless individuals (with adjustments)` * ((100 - input$high_risk) /100), 0)) %>%
         mutate(total_homeless = tot_homeless_undercount_only,
                pct_infected = input$infection / 100,
                pct_high_risk = input$high_risk /100,
@@ -285,25 +305,25 @@ server <- function(input, output){
     
     output$capacity_table <- renderTable({
       
-      capacity <- subset(cocs, coc == input$community)
+      capacity <- subset(all_communities, community == input$community)
       
     
       
       capacity2 <- capacity %>%
         mutate(pct_undercount = input$unshel_undercount / 100,
-               `Sheltered homeless individuals (2019 PIT)` = sheltered,
-               `Unsheltered homeless individuals (2019 PIT)` = unshelteredhomeless,
+               `Sheltered homeless individuals (2019 HUD Point-in-Time)` = sheltered,
+               `Unsheltered homeless individuals (2019 HUD Point-in-Time)` = unshelteredhomeless,
                `Adjusted unsheltered homeless individuals` = round(unshelteredhomeless * (1 + pct_undercount), 0),
-               `Total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (2019 PIT)` + `Adjusted unsheltered homeless individuals`,0)) %>%
-        mutate(total_homeless = `Total homeless individuals (with adjustments)`,
+               `Annualized total homeless individuals (with adjustments)` =  round(`Sheltered homeless individuals (2019 HUD Point-in-Time)` + `Adjusted unsheltered homeless individuals`,0)) %>%
+        mutate(total_homeless = `Annualized total homeless individuals (with adjustments)`,
                pct_infected = input$infection / 100,
-               `Total units needed` = `Total homeless individuals (with adjustments)`,
-               `Density reduction need` = round(`Sheltered homeless individuals (2019 PIT)` * .5, 0),
+               `Total units needed` = `Annualized total homeless individuals (with adjustments)`,
+               `Density reduction need` = round(`Sheltered homeless individuals (2019 HUD Point-in-Time)` * .5, 0),
                `Total new units required`  = `Density reduction need` + `Adjusted unsheltered homeless individuals`,
-               `Quarantine units required`  = round(`Total homeless individuals (with adjustments)` * pct_infected,0)
+               `Quarantine units required`  = round(`Annualized total homeless individuals (with adjustments)` * pct_infected,0)
                ) %>%
         select(`Adjusted unsheltered homeless individuals`,
-               `Sheltered homeless individuals (2019 PIT)`,
+               `Sheltered homeless individuals (2019 HUD Point-in-Time)`,
                `Density reduction need`,
                `Total new units required`,
                `Quarantine units required`)
@@ -311,7 +331,7 @@ server <- function(input, output){
       capacity2
     })      
         
-  
+}) 
 }
 
 shinyApp(ui = ui, server = server)

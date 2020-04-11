@@ -10,10 +10,12 @@ names(counties) <- tolower(names(counties))
 
 counties <- counties %>%
   mutate(community = paste(state_name, ",", county),
-         community_type = "County") 
+         community_type = "County") %>%
+  arrange(community)
 
 all_communities <- bind_rows(cocs, counties) %>%
   mutate(community_type = ifelse(community == " United States, nationwide",  
-         "United States, nationwide", community_type))
+         "United States, nationwide", community_type)) %>%
+  arrange(community_type, community)
 
 

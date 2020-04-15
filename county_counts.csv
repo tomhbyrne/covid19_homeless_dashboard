@@ -48,8 +48,8 @@ Ashtabula,OH,39007,20,66,86
 Athens,OH,39009,9,23,32
 Auglaize,OH,39011,0,0,0
 Belmont,OH,39013,0,21,21
-Brown,OH,39015,3,0,3
-Butler,OH,39017,86,212,298
+Brown,OH,39015,4,0,4
+Butler,OH,39017,90,212,302
 Carroll,OH,39019,0,1,1
 Champaign,OH,39021,0,25,25
 Clark,OH,39023,1,151,152
@@ -62,8 +62,8 @@ Darke,OH,39037,3,20,23
 Defiance,OH,39039,6,26,32
 Delaware,OH,39041,33,15,48
 Erie,OH,39043,32,70,102
-Fairfield,OH,39045,26,98,124
-Fayette,OH,39047,9,11,20
+Fairfield,OH,39045,27,98,125
+Fayette,OH,39047,13,11,24
 Fulton,OH,39051,1,0,1
 Gallia,OH,39053,8,10,18
 Geauga,OH,39055,11,25,36
@@ -73,14 +73,14 @@ Hancock,OH,39063,13,95,108
 Hardin,OH,39065,0,6,6
 Harrison,OH,39067,0,0,0
 Henry,OH,39069,1,6,7
-Highland,OH,39071,2,13,15
+Highland,OH,39071,6,13,19
 Hocking,OH,39073,6,14,20
 Holmes,OH,39075,5,18,23
 Huron,OH,39077,0,23,23
 Jackson,OH,39079,10,21,31
 Jefferson,OH,39081,8,45,53
 Knox,OH,39083,0,24,24
-Lake,OH,39085,50,43,93
+Lake,OH,39085,51,43,94
 Lawrence,OH,39087,1,34,35
 Licking,OH,39089,55,153,208
 Logan,OH,39091,1,7,8
@@ -104,8 +104,8 @@ Pike,OH,39131,61,12,73
 Portage,OH,39133,60,86,146
 Preble,OH,39135,20,17,37
 Putnam,OH,39137,3,0,3
-Richland,OH,39139,9,58,67
-Ross,OH,39141,40,27,67
+Richland,OH,39139,12,58,70
+Ross,OH,39141,42,27,69
 Sandusky,OH,39143,2,13,15
 Scioto,OH,39145,45,32,77
 Seneca,OH,39147,1,16,17
@@ -121,3 +121,53 @@ Wayne,OH,39169,39,69,108
 Williams,OH,39171,1,16,17
 Wood,OH,39173,0,15,15
 Wyandot,OH,39175,0,0,0
+Barbour,WV,54401,,,
+Berkeley,WV,54003,9,45,54
+Braxton,WV,54007,,,
+Calhoun,WV,54013,,,
+Doddridge,WV,54017,,,
+Fayette,WV,54019,13,0,13
+Gilmer,WV,54021,,,
+Grant,WV,54023,2,1,3
+Greenbrier,WV,54025,1,3,4
+Hampshire,WV,54057,1,0,1
+Hardy,WV,54031,,,
+Harrison,WV,54033,13,101,114
+Jackson,WV,54035,11,,
+Jefferson,WV,54037,6,22,28
+Lewis,WV,54041,,,
+Lincoln,WV,54043,,,
+Logan,WV,54045,9,15,24
+Marion,WV,54049,8,49,57
+Mason,WV,54053,12,5,17
+McDowell,WV,54047,0,13,13
+Mercer,WV,54055,3,8,11
+Mineral,WV,54057,3,2,5
+Mingo,WV,54059,6,0,6
+Monongalia,WV,54061,25,43,68
+Monroe,WV,54063,,,
+Morgan,WV,54065,5,4,9
+Nicholas,WV,54067,6,0,6
+Pendleton,WV,54071,0,2,2
+Pleasants,WV,54073,,,
+Pocahontas,WV,54075,,,
+Preston,WV,54077,0,2,2
+Raleigh,WV,54081,10,61,71
+Randolph,WV,54083,3,16,19
+Ritchie,WV,54085,,,
+Roane,WV,54087,,,
+Summers,WV,54089,,,
+Taylor,WV,54091,2,0,2
+Tucker,WV,54093,,,
+Tyler,WV,54095,,,
+Upshur,WV,54097,2,0,2
+Webster,WV,54101,,,
+Wirt,WV,54105,,,
+Wood,WV,54107,36,68,104
+Wyoming,WV,54109,1,0,1
+Region 1 ,ID-501,,71,42,113
+Region 2 ,ID-501,,161,8,169
+Region 3 ,ID-501,,609,162,771
+Region 4 ,ID-501,,9,20,29
+Region 5 ,ID-501,,36,48,84
+Region 6 ,ID-501,,38,43,81
